@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Word Generator</title>
+		<meta charset="UTF-8">
+		<style type="text/css">
+			.title {
+				width: 100%;
+				height: 10vh;
+
+				font-family: monospace;
+				font-size: calc(1vw + 3vh);
+				text-align: center;
+			}
+
+			.text {
+				width: 100%;
+
+				font-family: monospace;
+				font-size: 1vw;
+				text-align: left;
+
+				word-wrap: break-word;
+			}
+
+			.button0 {
+				margin-top: 3px;
+				padding-bottom: 6px;
+				width: calc(100%);
+				height: 5vh;
+				font-size: 3vh;
+			}
+
+			.out {
+				margin-top: 3px;
+				padding-bottom: 6px;
+				width: calc(100%);
+				height: 20vh;
+				font-size: 2vh;
+				resize: none;
+			}
+
+			.guide {
+				padding-left: 18vw;
+				padding-right: 18vw;
+				padding-top: 1vw;
+			}
+
+			.alignmiddle {
+				width: calc(60vw + 20px);
+				height: 10vh;
+				font-size: 1vh;
+				margin: auto;
+			}
+
+			.alignmiddle {
+				width: calc(60vw + 20px);
+				height: 23vh;
+				margin: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="title">makes some magic item</div>
+		
+		<div class="bottom alignmiddle">
+			<textarea id="output" class="out" readonly></textarea>
+		</div>
+
+		<div class="bottom alignmiddle">
+			<select name="time_setting" class="button0" id="time_setting" onchange="">
+			 	<option value="roman">Roman Arms and Armors</option>
+				<option value="early_medieval">Early Medieval Arms and Armors</option>
+				<option value="crusader">Crusader's Arms and Armors</option>
+				<option value="medieval">Basic Medieval/Fantasy Arms and Armors</option>
+				<option value="chinese">Ancient Chinese Arms and Armors</option>
+				<option value="japanese">Ancient Japanese Arms and Armors</option>
+			</select>
+
+			<input id="button0" class="button0" type="button" value="Generate" />
+		</div>
+
+		<script>
+			document.getElementById("button0").addEventListener("click", generate);
+
+			const armors = {
+				roman: ["segmented armor", "galea"],
+				early_medieval: ["hauberk", "byrnie", "gjermundbu helmet", "nasal helmet", "coppergate helmet", "face mask helmet (sutton hoo helmet)", "arm ring"],
+				crusader: ["hauberk", "great helm", "nasal helmet", "mail coif", "mail pants"],
+				medieval: ["bascinet", "barbute", "sallet", "kettle helmet", "armet", "breastplate", "backplate", "shoulder plates", "gauntlets", "greaves", "arm plates"],
+				chinese: ["lamellar armor", "lamellar helmet", "hauberk"],
+				japanese: ["lamellar armor", "lamellar helmet", "kabuto", "hauberk"],
+				all: ["necklace", "amulet", "bracelet", "ring", "thumb ring", "circlet", "crown", "tiara", "choker", "gloves", "boots", "shoes", "belt"]
+			};
+
+			const weapons = {
+				roman: ["spatha", "gladius", "pike", "tower shield", "bow", "crossbow", "round shield"],
+				early_medieval: ["spear", "viking sword", "handaxe", "longaxe", "bow", "seax", "longseax", "kite shield", "round shield"],
+				crusader: ["spear", "arming sword", "longsword", "flanged mace", "dagger", "bow", "longbow", "crossbow", "kite shield", "round shield"],
+				medieval: ["spear", "arming sword", "longsword", "greatsword", "flanged mace", "morning star", "poleaxe", "war hammer", "war axe", "bardiche", "dagger", "bow", "longbow", "crossbow", "buckler", "heater shield", "round shield"],
+				chinese: ["jian", "zhanmadao", "liuyedao", "guandao", "crossbow", "bow", "fire lance", "monk's spade"],
+				japanese: ["naginata", "torimono sandōgu", "katana", "wakizashi", "ōdachi", "kanabō", "bow"],
+				all: ["rod", "staff"]
+			};
+
+			const trinkets = [
+				"wooden figurine", "stone figurine", "small box"
+			];
+
+			const stats = [
+				"strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "ac", "initiative"
+			];
+
+			const stats2 = [
+				"strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"
+			];
+
+			const damage_types = [
+				"fire", "lightning", "acid", "force", "necrotic", "poison", "radiant", "cold", "psychic"
+			];
+
+			const armor_effects = [
+				"10ft darkvision",
+				"30ft darkvision",
+				"5ft truevision",
+				"10ft truevision",
+				"+10ft speed",
+				"+1 stats",
+				"+2 stats",
+				"+3 stats",
+				"+1 to stats saving throws",
+				"+2 to stats saving throws",
+				"+3 to stats saving throws",
+				"resistance to damage_type damage",
+				"1 lbs lighter",
+			];
+
+			const weapon_effects = [
+				"+1 weapon",
+				"+2 weapon",
+				"+3 weapon",
+				"+1d6 damage_type damage",
+				"1 lbs lighter",
+				"doesn't naturally deteriorate or corrode",
+				"shoots a bolt that deals 1d8 damage_type damage",
+				"shoots a bolt that deals 2d8 damage_type damage",
+			];
+
+			const trinket_effects = [
+				"10ft darkvision",
+				"30ft darkvision",
+				"5ft truevision",
+				"10ft truevision",
+				"+10ft speed",
+				"+1 stats",
+				"+2 stats",
+				"+3 stats",
+				"+1 to stats2 saving throws",
+				"+2 to stats2 saving throws",
+				"+3 to stats2 saving throws",
+				"resistance to damage_type damage",
+				"1 lbs lighter",
+				"emits light in a 10ft radius",
+				"emits light in a 20ft radius",
+				"emits light in a 30ft radius"
+			];
+
+			const twists = [
+				"requires command word",
+				"eat it to activate",
+				"activates when worn or used",
+				"3 charges",
+				"5 charges",
+				"10 charges"
+			];
+
+			const no_charges_left = [
+				"the item regains its charges when dawn comes",
+				"the item becomes non-magical once it loses its charges",
+				"item explodes when it loses its charges",
+			];
+
+			function random(min, max) {
+				return Math.floor(Math.random() * (max - min)) + min;
+			}
+
+			function generate() {
+				var out = "";
+				var type = random(0, 5);
+
+				var item = "";
+				var power = "";
+
+				if (type == 0) {
+					item = armors[document.getElementById("time_setting").value][random(0, armors[document.getElementById("time_setting").value].length)];
+					power = armor_effects[random(0, armor_effects.length)];
+				} else if (type == 1) {
+					item = weapons[document.getElementById("time_setting").value][random(0, weapons[document.getElementById("time_setting").value].length)];
+					power = weapon_effects[random(0, weapon_effects.length)];
+				}else if (type == 2) {
+					item = armors.all[random(0, armors.all.length)];
+					power = armor_effects[random(0, armor_effects.length)];
+				} else if (type == 3) {
+					item = weapons.all[random(0, weapons.all.length)];
+					power = weapon_effects[random(0, weapon_effects.length)];
+				} else {
+					item = trinkets[random(0, trinkets.length)];
+					power = trinket_effects[random(0, trinket_effects.length)];
+				}
+
+				if (random(1, 3) == 1) {
+					power = trinket_effects[random(0, trinket_effects.length)];
+				}
+
+				power = power.replace("stats2", stats2[random(0, stats2.length)]).replace("stats", stats[random(0, stats.length)]).replace("damage_type", damage_types[random(0, damage_types.length)]);
+
+				if (power.includes("weapon")) {
+					item = power[0] + power [1] + " " + item;
+					power = "is a " + power;
+				}
+
+				if (random(1, 5) == 1) {
+					var power2 = "";
+
+					while (power2 == "" || power2 == power) {
+						power2 = trinket_effects[random(0, trinket_effects.length)];
+					}
+
+					power2 = power2.replace("stats2", stats2[random(0, stats2.length)]).replace("stats", stats[random(0, stats.length)]).replace("damage_type", damage_types[random(0, damage_types.length)]);
+
+					if (power2.includes("weapon")) {
+						item = power2[0] + power2 [1] + " " + item;
+						power2 = "is a " + power2;
+					}
+
+					power = power + ", " + power2;
+				}
+
+				var twist = twists[random(0, twists.length)];
+
+				if (twist.includes("charge")) {
+					twist += ", " + twists[random(0, 2)];
+					twist += ", " + no_charges_left[random(0, no_charges_left.length)];
+				}
+
+				out = item + "\npower: " + power + "\ntwist: " + twist;
+				
+				document.getElementById("output").value = out;
+			}
+		</script>
+	</body>
+</html>
