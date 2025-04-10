@@ -148,6 +148,7 @@
 				"doesn't naturally deteriorate or corrode",
 				"shoots a bolt that deals 1d8 damage_type damage",
 				"shoots a bolt that deals 2d8 damage_type damage",
+				"creatures with the monster_type type take the weapon's full damage, regardless of resistances or immunities"
 			];
 
 			const trinket_effects = [
@@ -166,7 +167,9 @@
 				"1 lbs lighter",
 				"emits light in a 10ft radius",
 				"emits light in a 20ft radius",
-				"emits light in a 30ft radius"
+				"emits light in a 30ft radius",
+				"creatures with the monster_type type that come within 30 ft of this trinket must succeed on a dc 10 wisdom saving throw or be frightened by this object for 1 minute",
+				"creatures with the monster_type type other than you that come within 30 ft of this trinket must succeed on a dc 10 wisdom saving throw or be charmed by you for 1 minute"
 			];
 
 			const twists = [
@@ -187,7 +190,8 @@
 			const curses = [
 				"permanantly takes 1 stats2 away from you on each use",
 				"if this item isn't used once a day, you take 1d4 necrotic damage",
-				"only works on creatures with the monster_type type"
+				"only works on creatures with the monster_type type",
+				"on each use, you gain one level of exhaustion"
 			];
 
 			function random(min, max) {
