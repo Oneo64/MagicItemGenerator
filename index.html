@@ -119,6 +119,10 @@
 				"fire", "lightning", "acid", "force", "necrotic", "poison", "radiant", "cold", "psychic"
 			];
 
+			const monster_types = [
+				"beast", "humanoid", "monstrosity", "fiend", "fey", "abberation", "celestial", "undead", "construct", "elemental", "dragon", "giant", "plant", "ooze"
+			];
+
 			const armor_effects = [
 				"10ft darkvision",
 				"30ft darkvision",
@@ -180,8 +184,18 @@
 				"item explodes when it loses its charges",
 			];
 
+			const curses = [
+				"permanantly takes 1 stats2 away from you on each use",
+				"if this item isn't used once a day, you take 1d4 necrotic damage",
+				"only works on creatures with the monster_type type"
+			];
+
 			function random(min, max) {
 				return Math.floor(Math.random() * (max - min)) + min;
+			}
+
+			function power_set_up(power) {
+				return power.replace("stats2", stats2[random(0, stats2.length)]).replace("stats", stats[random(0, stats.length)]).replace("damage_type", damage_types[random(0, damage_types.length)]).replace("monster_type", monster_types[random(0, monster_types.length)]);
 			}
 
 			function generate() {
@@ -212,7 +226,7 @@
 					power = trinket_effects[random(0, trinket_effects.length)];
 				}
 
-				power = power.replace("stats2", stats2[random(0, stats2.length)]).replace("stats", stats[random(0, stats.length)]).replace("damage_type", damage_types[random(0, damage_types.length)]);
+				power = power_set_up(power);
 
 				if (power.includes("weapon")) {
 					item = power[0] + power [1] + " " + item;
@@ -226,7 +240,7 @@
 						power2 = trinket_effects[random(0, trinket_effects.length)];
 					}
 
-					power2 = power2.replace("stats2", stats2[random(0, stats2.length)]).replace("stats", stats[random(0, stats.length)]).replace("damage_type", damage_types[random(0, damage_types.length)]);
+					power2 = power_set_up(power2);
 
 					if (power2.includes("weapon")) {
 						item = power2[0] + power2 [1] + " " + item;
@@ -243,7 +257,15 @@
 					twist += ", " + no_charges_left[random(0, no_charges_left.length)];
 				}
 
-				out = item + "\npower: " + power + "\ntwist: " + twist;
+				if (random(1, 6) == 1) {
+					var curse = curses[random(0, curses.length)];
+
+					curse = power_set_up(curse);
+
+					out = item + "\npower: " + power + "\ntwist: " + twist + "\ncurse: " + curse;
+				} else {
+					out = item + "\npower: " + power + "\ntwist: " + twist;
+				}
 				
 				document.getElementById("output").value = out;
 			}
