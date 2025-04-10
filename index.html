@@ -233,7 +233,7 @@
 
 				power = power_set_up(power);
 
-				if (power.includes("weapon")) {
+				if (power.includes("weapon") && power.includes("+")) {
 					item = power[0] + power [1] + " " + item;
 					power = "is a " + power;
 				}
