@@ -176,23 +176,26 @@
 			const twists = [
 				"requires command word",
 				"activates when worn or used",
-				"3 charges",
-				"5 charges",
-				"10 charges",
-				"20 charges"
+				"1 charge",
+				"chn charges"
 			];
 
 			const no_charges_left = [
-				"the item regains its charges when dawn comes",
+				"the item regains 1 charge when dawn comes",
+				"the item regains 1d4 charges when dawn comes",
+				"the item regains all its charges when dawn comes",
 				"the item becomes non-magical once it loses its charges",
-				"item explodes when it loses its charges",
+				"item crumbles to dust when it loses its charges"
 			];
 
 			const curses = [
-				"permanantly takes 1 stats2 away from you on each use",
+				"permanantly takes 1 stats2 away from you on each use, with a the lowest stat point you can reach being 3",
 				"if this item isn't used once a day, you take 1d4 necrotic damage",
 				"only works on creatures with the monster_type type",
-				"on each use, you gain one level of exhaustion"
+				"any creature with the monster_type type who tries to use or wear this will take 1d4 necrotic damage",
+				"any creature that isn't a monster_type type who tries to use or wear this will take 1d4 necrotic damage",
+				"on each use, you gain one level of exhaustion",
+				"if the item loses all its charges, it explodes, causing you to take 2 + 1d8 bludgeoning damage"
 			];
 
 			function random(min, max) {
@@ -258,6 +261,8 @@
 				var twist = twists[random(0, twists.length)];
 
 				if (twist.includes("charge")) {
+					if (random(1, 5) != 1) twist = twist.replace("chn", random(2, 11)); else twist = twist.replace("chn", random(11, 21));
+
 					twist += ", " + twists[random(0, 2)];
 					twist += ", " + no_charges_left[random(0, no_charges_left.length)];
 				}
